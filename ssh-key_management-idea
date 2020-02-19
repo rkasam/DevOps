@@ -1,0 +1,18 @@
+Guide lines for managing ssh keys at an organization:
+----------------------------------------------------
+
+We will use LDAP (source of truth for UID/GID and relations), salt stack and an integrator tool/scripts to manage ssh key management
+
+LDAP will define the groups, users and will populate with public keys
+
+Assign a salt role to host, and assign the required groups to the host (we can write a tool to do it), the roles and groups need to be added as a grain in minion salt config file. salt stack grains will dectate the groups and salt roles assigned to the host(minion)
+
+salt stack will distribute the keys of the users that are part of the assigned groups on hosts. under users home directories ~/.ssh/authorized_keys file.
+
+If a user does not exist, salt stack will create the user and will populate the keys
+
+Any accounts on the host that do not have a corresponding UID or username assigned via groups will be removed via a 'userdel' command.
+
+If UID/GIDs and permissions are wrong salt stack will fix them and will populate the keys.
+
+Salt stack can have module to executes various commands usermod, userdel commands along with populating the keys.
